@@ -4,6 +4,8 @@ Laboratorio interactivo en 3D (Three.js) para entender **cómo funciona una cám
 desmonta sus piezas, sigue los **rayos de luz** desde la escena hasta el sensor y mira en directo
 **cómo quedaría la foto**, con la maqueta 3D justo delante de la pantalla del resultado.
 
+**Demo:** https://diegodg-01.github.io/Camera3D/
+
 ## Puesta en marcha
 
 ```bash
@@ -11,6 +13,9 @@ npm install
 npm run dev      # abre http://localhost:5173
 npm run build    # genera dist/ (estático, rutas relativas: sirve en GitHub Pages o cualquier hosting)
 ```
+
+Cada push a `main` publica la web en GitHub Pages con `.github/workflows/deploy-pages.yml`
+(en *Settings → Pages* la fuente debe ser **GitHub Actions**).
 
 ## Qué se puede hacer
 
