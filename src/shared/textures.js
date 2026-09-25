@@ -176,3 +176,33 @@ export function glowTexture() {
   g.fillRect(0, 0, 64, 64);
   return tex(c, { srgb: false, aniso: 1 });
 }
+
+/** Rayas para la correa dentada (se desplazan para simular el movimiento). */
+export function stripeTexture() {
+  const [c, g] = canvas(64, 16);
+  g.fillStyle = '#161618';
+  g.fillRect(0, 0, 64, 16);
+  g.fillStyle = '#2c2c30';
+  g.fillRect(0, 0, 26, 16);
+  g.fillStyle = '#f2b233';
+  g.fillRect(40, 6, 4, 4);
+  return tex(c, { repeat: true, aniso: 4 });
+}
+
+/** Aletas del intercooler. */
+export function finTexture() {
+  const [c, g] = canvas(256, 256);
+  g.fillStyle = '#2a2d33';
+  g.fillRect(0, 0, 256, 256);
+  for (let y = 0; y < 256; y += 6) {
+    g.fillStyle = y % 12 ? '#8c9199' : '#5d626a';
+    g.fillRect(0, y, 256, 3);
+  }
+  for (let x = 0; x < 256; x += 32) {
+    g.fillStyle = 'rgba(0,0,0,0.35)';
+    g.fillRect(x, 0, 2, 256);
+  }
+  const t = tex(c, { repeat: true });
+  t.repeat.set(4, 3);
+  return t;
+}

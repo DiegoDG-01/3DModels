@@ -14,6 +14,7 @@ import { RayViz, POINT_KEYS } from './scene/rays.js';
 import { createStage } from './scene/stage.js';
 import { PhotoPipeline } from './render/photo.js';
 import { ShutterSound } from './ui/sound.js';
+import { mountLabNav } from '../shared/labnav.js';
 
 const $ = (id) => document.getElementById(id);
 const app = $('app');
@@ -896,6 +897,7 @@ function onResize() {
 window.addEventListener('resize', onResize);
 
 // =================================================================== arranque
+mountLabNav('camera');
 wireControls();
 setSubject(state.subjectId);
 setCamera(state.cameraId);

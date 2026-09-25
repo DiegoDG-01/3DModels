@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { DISPLAY_PER_MM } from '../optics.js';
-import { filmStripTexture, labelTexture, bayerTexture, woodTexture } from './textures.js';
+import { filmStripTexture, labelTexture, bayerTexture, woodTexture } from '../../shared/textures.js';
 
 export const AXIS_Y = 2.0; // altura del eje óptico sobre el banco
 const TAU = Math.PI * 2;

@@ -1,7 +1,7 @@
 // Maquetas fotografiables. Capas: 0 = solo vista general, 1 = vista general + foto, 2 = solo foto.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { gradientTexture, woodTexture, checkerTexture, windowsTexture, labelTexture } from './textures.js';
+import { gradientTexture, woodTexture, checkerTexture, windowsTexture, labelTexture } from '../../shared/textures.js';
 
 export const TRAY_Y = 1.05; // superficie de la maqueta
 const TRAY = { x0: 3.0, x1: 10.0, z: 1.9 };

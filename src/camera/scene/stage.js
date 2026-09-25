@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { rulerTexture, labelTexture } from './textures.js';
+import { rulerTexture, labelTexture } from '../../shared/textures.js';
 import { TRAY_Y } from './subjects.js';
 import { UNIT_MM } from '../optics.js';
 

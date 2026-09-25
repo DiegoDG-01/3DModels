@@ -6,7 +6,7 @@ import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { UNIT_MM, DISPLAY_PER_MM, imageDistance } from '../optics.js';
 import { AXIS_Y } from './cameraRig.js';
-import { glowTexture } from './textures.js';
+import { glowTexture } from '../../shared/textures.js';
 
 export const POINT_COLORS = { fg: 0xffa14a, mid: 0x5ce1e6, bg: 0xff6fae };
 export const POINT_KEYS = ['fg', 'mid', 'bg'];

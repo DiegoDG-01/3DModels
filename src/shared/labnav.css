@@ -1,0 +1,14 @@
+.labnav {
+  position: fixed; z-index: 30; top: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 2px; padding: 4px;
+  background: rgba(13, 16, 23, 0.78); border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  font: 600 11.5px/1 Inter, system-ui, sans-serif; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.labnav a { color: #b9bfca; text-decoration: none; padding: 7px 12px; border-radius: 999px; white-space: nowrap; }
+.labnav a:hover { color: #fff; background: rgba(255, 255, 255, 0.07); }
+.labnav a:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+.labnav a.on { color: #0b0d12; background: var(--lab, #fff); }
+.labnav .labnav-home { color: #8a92a1; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.04em; }
+@media (max-width: 1000px) { .labnav { top: auto; bottom: 64px; } }
+@media (max-width: 640px) { .labnav .labnav-home { display: none; } .labnav { bottom: 50px; } }

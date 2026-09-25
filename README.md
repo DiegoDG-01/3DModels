@@ -1,60 +1,64 @@
-# Cámara 3D · Dentro de una cámara
+# Laboratorios 3D · Cómo funcionan las cosas por dentro
 
-Laboratorio interactivo en 3D (Three.js) para entender **cómo funciona una cámara fotográfica**:
-desmonta sus piezas, sigue los **rayos de luz** desde la escena hasta el sensor y mira en directo
-**cómo quedaría la foto**, con la maqueta 3D justo delante de la pantalla del resultado.
+Entornos interactivos en 3D (Three.js) para entender cómo funcionan objetos reales: se desmontan
+pieza a pieza, cada pieza tiene su ficha y los mandos cambian el comportamiento en directo.
 
 **Demo:** https://diegodg-01.github.io/Camera3D/
+
+| Entorno | Ruta | Qué enseña |
+| --- | --- | --- |
+| Cámara fotográfica | `camera/` | Rayos de luz hasta el sensor, enfoque, apertura, exposición y la foto resultante |
+| Motor 2JZ-GTE | `engine/` | Ciclo de 4 tiempos, orden de encendido, flujo de aire y gases, turbo e intercooler |
 
 ## Puesta en marcha
 
 ```bash
 npm install
-npm run dev      # abre http://localhost:5173
+npm run dev      # http://localhost:5173 (hub) · /camera/ · /engine/
 npm run build    # genera dist/ (estático, rutas relativas: sirve en GitHub Pages o cualquier hosting)
 ```
 
 Cada push a `main` publica la web en GitHub Pages con `.github/workflows/deploy-pages.yml`
 (en *Settings → Pages* la fuente debe ser **GitHub Actions**).
 
-## Qué se puede hacer
+## Cámara fotográfica
 
-- **4 cámaras**: réflex digital (espejo + pentaprisma), sin espejo (sensor APS-C y visor electrónico),
-  analógica de 35 mm (película ISO 400) y estenopeica (sin lente, ƒ/180).
-- **5 objetivos**: 24, 35, 50, 85 y 135 mm (el encuadre y la profundidad de campo cambian de verdad).
-- **4 maquetas**: cabaña y montaña, bodegón, ajedrez y calle de noche.
-- **Piezas interactivas**: pasa el ratón o haz clic en cualquier pieza (lente frontal, grupo de enfoque,
-  anillo de enfoque, diafragma, montura, espejo, pentaprisma, obturador, sensor/película…) para ver
-  qué es y qué le hace a la luz. El **anillo de enfoque** y el **anillo de diafragma** se pueden arrastrar.
-- **Vista montada / despiezada** y **rayos X** para ver el interior del cuerpo.
-- **Rayos de luz** desde tres puntos de la escena (primer plano, medio y fondo): se ve cómo convergen
-  en un punto (nítido) o llegan como un disco (borroso) al sensor, cómo el espejo los desvía al visor
-  y cómo el obturador los corta.
-- **Plano de enfoque y zona nítida** dibujados dentro de la maqueta.
-- **Foto real**: la maqueta se renderiza desde el centro óptico con profundidad de campo física
-  (círculo de confusión calculado con la fórmula de lente delgada), exposición (apertura, velocidad,
-  ISO), ruido, grano de película y trepidación si disparas lento a pulso.
-- **Galería de aperturas** en la pared (ƒ/2 · ƒ/5.6 · ƒ/16) y **carrete** con las fotos que dispares.
+- **4 cámaras**: réflex digital, sin espejo (APS-C), analógica de 35 mm y estenopeica; **5 objetivos** (24–135 mm) y **4 maquetas**.
+- **Rayos de luz** desde tres puntos de la escena: convergen en un punto (nítido) o llegan como disco (borroso); el espejo los desvía al visor y el obturador los corta.
+- **Foto real** con profundidad de campo física, exposición, ruido ISO, grano y trepidación, mostrada detrás de la maqueta 3D.
 
 Atajos: `1` `2` `3` enfoque · `←` `→` apertura · `E` despiece · `X` rayos X · `R` rayos · `L` etiquetas · `Espacio` disparar.
+
+## Motor 2JZ-GTE
+
+- **Modelo completo**: bloque, culata, cigüeñal con contrapesos, 6 bielas y pistones, 2 árboles de levas, 24 válvulas con muelles y taqués, correa de distribución, bobinas, colectores, inyectores, mariposa, turbos, wastegate, blow-off, intercooler, filtro, cárter y volante.
+- **Cinemática real**: biela-manivela exacta, orden de encendido 1-5-3-6-2-4 (una explosión cada 120°), levas a media velocidad y alzada de válvulas según la distribución.
+- **Rayos X**: color del gas en cada cilindro (admisión, compresión, explosión, escape), chispa y llama.
+- **Flujo**: partículas de aire (frío → caliente al salir del turbo → enfriado por el intercooler) y gases de escape que mueven la turbina.
+- **Turbo**: twin turbo secuencial de serie (el segundo entra a 4000 rpm) o un single grande; retraso (lag), wastegate y "psshh" de la blow-off al soltar el acelerador.
+- **Banco de potencia** con curvas de par y potencia (≈330 CV / 450 Nm de serie) y el punto de funcionamiento actual; corte animado de un cilindro con los 4 tiempos.
+- **Cámara lenta** (hasta ÷200) y sonido sintetizado del motor y del turbo.
+
+Atajos: `↑` `↓` régimen · `Espacio` (mantener) a fondo · `1`–`6` cilindro · `E` despiece · `X` rayos X · `F` flujo · `S` sonido.
+
+El modelo físico es simplificado (rendimiento volumétrico, presión media efectiva, eficiencia del compresor
+y del intercooler) pero da cifras realistas.
 
 ## Estructura
 
 ```
+index.html              hub de entrada con la lista de laboratorios
+camera/index.html       entorno de la cámara
+engine/index.html       entorno del motor
 src/
-  main.js              estado, interacción, disparo y HUD
-  optics.js            óptica de lente delgada, profundidad de campo y exposición
-  data/cameras.js      cámaras y objetivos
-  data/parts.js        fichas didácticas de cada pieza
-  scene/cameraRig.js   modelo 3D de las cámaras (posiciones montada/despiezada, iris, obturador, espejo…)
-  scene/subjects.js    maquetas fotografiables
-  scene/rays.js        trazado de rayos, fotones y discos de confusión
-  scene/stage.js       sala, banco óptico, luces, pantalla de resultado y plano de enfoque
-  scene/textures.js    texturas generadas con canvas
-  render/photo.js      render de la foto: bokeh, exposición, ruido y trepidación
-  ui/sound.js          sonido del obturador (Web Audio)
+  shared/               registro de laboratorios, navegación, estilos del HUD y texturas comunes
+  hub/                  página de entrada
+  camera/               óptica, modelo 3D de las cámaras, maquetas, rayos y render de la foto
+  engine/               física del motor, modelo 3D, partículas, banco de potencia, corte del cilindro y sonido
 ```
 
-Notas sobre la escala: en el lado de la escena 1 unidad = 10 cm reales; en el lado de la cámara
-1 mm del sensor = 0,05 unidades. El desenfoque de los rayos en el banco se exagera para que se vea;
-los números del HUD y la foto usan los valores físicos reales.
+### Añadir un entorno nuevo
+
+1. Crea `mi-entorno/index.html` y su código en `src/mi-entorno/` (puedes reutilizar `src/shared/hud.css`).
+2. Regístralo en `src/shared/labs.js` (aparecerá en el hub y en la barra de navegación).
+3. Añade su HTML a `build.rollupOptions.input` en `vite.config.js`.

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dentro de una cámara</title>
+  <meta name="description" content="Laboratorio interactivo en 3D: desmonta una cámara, sigue los rayos de luz hasta el sensor y mira cómo cambia la foto." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%230d1016' stroke='%235ce1e6' stroke-width='5'/%3E%3Cpolygon points='32,18 44,25 44,39 32,46 20,39 20,25' fill='%235ce1e6'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="../src/shared/hud.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="loading"><div class="spinner"></div><span>Montando el laboratorio óptico…</span></div>
+
+    <!-- Título, datos y explicación -->
+    <header class="panel brand" id="brand">
+      <div class="kicker">Laboratorio óptico · 3D</div>
+      <h1>DENTRO DE<br /><span>UNA CÁMARA</span></h1>
+      <p class="lead">Desmonta la cámara pieza a pieza y sigue la luz desde la escena hasta el sensor. Gira el anillo de enfoque y mira cómo se mueve el plano donde todo se vuelve nítido.</p>
+      <div class="stats" id="stats"></div>
+      <div class="meter" id="meter">
+        <div class="meter-head"><span>EXPOSICIÓN</span><b id="meterText">correcta</b></div>
+        <div class="meter-scale">
+          <span>−3</span><span>−2</span><span>−1</span><span>0</span><span>+1</span><span>+2</span><span>+3</span>
+          <i id="meterNeedle"></i>
+        </div>
+      </div>
+      <button class="collapse" id="brandCollapse" title="Plegar">–</button>
+    </header>
+
+    <!-- Por qué se ve así -->
+    <section class="panel explain-card" id="explainCard">
+      <div class="kicker">¿Por qué se ve así?</div>
+      <div class="explain" id="explain"></div>
+      <ul class="legend" id="legend"></ul>
+    </section>
+
+    <!-- Controles -->
+    <aside class="panel controls" id="controls">
+      <section>
+        <h3>Cámara</h3>
+        <div class="seg seg-4" id="camButtons"></div>
+        <p class="note" id="camDesc"></p>
+      </section>
+      <section>
+        <h3>Objetivo <em id="lensName"></em></h3>
+        <div class="seg seg-5" id="lensButtons"></div>
+      </section>
+      <section>
+        <h3>Escena</h3>
+        <div class="seg seg-4" id="subjectButtons"></div>
+      </section>
+      <section id="focusSection">
+        <h3>Enfoque <small>arrastra el anillo · 1 2 3</small><b class="val" id="focusVal">54 cm</b></h3>
+        <div class="seg seg-3" id="focusButtons">
+          <button data-focus="fg">Primer plano</button>
+          <button data-focus="mid">Medio</button>
+          <button data-focus="bg">Fondo</button>
+        </div>
+        <input type="range" id="focusSlider" min="0" max="1000" step="1" />
+      </section>
+      <section id="apertureSection">
+        <h3>Apertura <small>← →</small><b class="val" id="apertureVal">ƒ/2</b></h3>
+        <div class="row">
+          <svg class="iris-icon" viewBox="-50 -50 100 100" id="irisIcon"><circle r="46" class="ring" /><polygon id="irisPoly" /></svg>
+          <input type="range" id="apertureSlider" min="0" max="8" step="1" />
+        </div>
+        <div class="ticks" id="apertureTicks"></div>
+      </section>
+      <section>
+        <h3>Exposición</h3>
+        <div class="seg seg-2" id="modeButtons">
+          <button data-mode="A" title="La cámara elige la velocidad">Auto (prioridad ƒ)</button>
+          <button data-mode="M" title="Tú eliges todo">Manual</button>
+        </div>
+        <label class="slider-row"><span>Velocidad</span><input type="range" id="shutterSlider" min="0" max="17" step="1" /><b id="shutterVal">1/60</b></label>
+        <label class="slider-row"><span>ISO</span><input type="range" id="isoSlider" min="0" max="7" step="1" /><b id="isoVal">100</b></label>
+      </section>
+      <section>
+        <h3>Vista</h3>
+        <div class="seg seg-2" id="explodeButtons">
+          <button data-explode="0">Montada</button>
+          <button data-explode="1">Despiezada</button>
+        </div>
+        <div class="toggles">
+          <label><input type="checkbox" id="tRays" checked /> Rayos de luz <kbd>R</kbd></label>
+          <label><input type="checkbox" id="tXray" /> Rayos X <kbd>X</kbd></label>
+          <label><input type="checkbox" id="tLabels" checked /> Etiquetas <kbd>L</kbd></label>
+          <label><input type="checkbox" id="tTripod" /> Trípode</label>
+          <label id="mirrorToggle"><input type="checkbox" id="tMirror" /> Espejo bajado (visor)</label>
+          <label><input type="checkbox" id="tPlane" checked /> Plano de enfoque</label>
+        </div>
+        <div class="row gap">
+          <button class="ghost" id="resetView">⟲ Vista general</button>
+          <button class="ghost" id="helpBtn">? Ayuda</button>
+        </div>
+      </section>
+      <button class="collapse" id="controlsCollapse" title="Plegar">–</button>
+    </aside>
+
+    <!-- Ficha de pieza -->
+    <section class="panel part-card" id="partCard" hidden>
+      <button class="close" id="partClose" title="Cerrar">×</button>
+      <div class="part-group" id="partGroup"></div>
+      <h2 id="partName"></h2>
+      <p class="live" id="partLive"></p>
+      <h4>Qué es</h4>
+      <p id="partWhat"></p>
+      <h4>Qué le hace a la luz</h4>
+      <p id="partLight"></p>
+      <div class="actions" id="partActions"></div>
+    </section>
+
+    <!-- Piezas -->
+    <nav class="parts-bar" id="partsBar"></nav>
+
+    <!-- Foto -->
+    <div class="photo-inset" id="photoInset">
+      <div class="inset-head"><span id="insetTitle">VISTA PREVIA</span><span id="insetMeta"></span></div>
+      <div class="inset-view" id="insetView"></div>
+      <div class="inset-foot">
+        <span id="insetHint">Así quedaría la foto</span>
+        <button class="shoot" id="shootBtn" title="Espacio"><span></span>Disparar</button>
+      </div>
+    </div>
+
+    <!-- Carrete -->
+    <div class="roll" id="roll"><div class="roll-empty">Tu carrete está vacío · pulsa <b>Disparar</b></div></div>
+
+    <div id="tooltip"></div>
+    <div id="flash"></div>
+    <button id="menuBtn" class="menu-btn" title="Controles">☰</button>
+
+    <dialog id="lightbox">
+      <img id="lbImg" alt="Foto capturada" />
+      <div class="lb-meta" id="lbMeta"></div>
+      <div class="row gap">
+        <a class="ghost btn" id="lbDownload" download="foto.png">Descargar</a>
+        <button class="ghost" id="lbClose">Cerrar</button>
+      </div>
+    </dialog>
+
+    <dialog id="help">
+      <h2>Cómo usar el laboratorio</h2>
+      <ul>
+        <li><b>Arrastra</b> para girar la vista, <b>rueda</b> para acercarte, <b>clic derecho</b> para desplazarte.</li>
+        <li><b>Pasa el ratón / haz clic</b> sobre cualquier pieza para ver qué hace y cómo afecta a la luz.</li>
+        <li><b>Arrastra el anillo de enfoque</b> (goma estriada) arriba/abajo para mover el plano de enfoque.</li>
+        <li><b>Arrastra el anillo dentado de latón</b> para abrir/cerrar el diafragma.</li>
+        <li>Los <b>rayos de colores</b> salen de tres puntos de la maqueta. Si se juntan en un punto sobre el sensor, ese objeto sale nítido; si llegan como un disco, sale borroso.</li>
+        <li>La pantalla del fondo y la vista previa muestran la foto real: profundidad de campo, exposición, ruido ISO y trepidación.</li>
+      </ul>
+      <p class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> enfoque · <kbd>←</kbd><kbd>→</kbd> apertura · <kbd>E</kbd> despiece · <kbd>X</kbd> rayos X · <kbd>R</kbd> rayos · <kbd>L</kbd> etiquetas · <kbd>Espacio</kbd> disparar · <kbd>Esc</kbd> cerrar</p>
+      <button class="ghost" id="helpClose">Entendido</button>
+    </dialog>
+  </div>
+  <script type="module" src="../src/camera/main.js"></script>
+</body>
+</html>
