@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motor 2JZ-GTE</title>
+  <meta name="description" content="Laboratorio interactivo en 3D del Toyota 2JZ-GTE: ciclo de 4 tiempos, orden de encendido, flujo de aire y gases y cómo el turbo multiplica la potencia." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='14' y='6' width='36' height='34' rx='4' fill='%230d1016' stroke='%23ff8a3d' stroke-width='5'/%3E%3Crect x='20' y='18' width='24' height='12' fill='%23ff8a3d'/%3E%3Cline x1='32' y1='30' x2='24' y2='54' stroke='%23ff8a3d' stroke-width='5'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="../src/shared/hud.css" />
+  <link rel="stylesheet" href="../src/engine/engine.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="loading"><div class="spinner"></div><span>Montando el motor en el banco…</span></div>
+
+    <header class="panel brand" id="brand">
+      <div class="kicker">Laboratorio mecánico · 3D</div>
+      <h1>DENTRO DE UN<br /><span>MOTOR 2JZ-GTE</span></h1>
+      <p class="lead">El seis en línea de 3 litros del Toyota Supra. Mira cómo cada explosión empuja un pistón, cómo el escape hace girar el turbo y cómo el turbo mete más aire para quemar más gasolina.</p>
+      <div class="stats" id="stats"></div>
+      <div class="meter" id="meter">
+        <div class="meter-head"><span>PRESIÓN EN EL COLECTOR</span><b id="meterText">vacío</b></div>
+        <div class="meter-scale boost-scale">
+          <span>−0,8</span><span>0</span><span>0,5</span><span>1</span><span>1,5</span><span>2</span>
+          <i id="meterNeedle"></i>
+        </div>
+      </div>
+      <button class="collapse" id="brandCollapse" title="Plegar">–</button>
+    </header>
+
+    <aside class="panel controls" id="controls">
+      <section>
+        <h3>Turbo</h3>
+        <div class="seg seg-2" id="turboButtons"></div>
+        <p class="note" id="turboDesc"></p>
+      </section>
+      <section>
+        <h3>Régimen <small>↑ ↓</small><b class="val" id="rpmVal">3000 rpm</b></h3>
+        <input type="range" id="rpmSlider" min="800" max="7000" step="50" />
+        <div class="seg seg-4" id="rpmPresets">
+          <button data-rpm="800">Ralentí</button>
+          <button data-rpm="2500">2500</button>
+          <button data-rpm="4500">4500</button>
+          <button data-rpm="6800">6800</button>
+        </div>
+      </section>
+      <section>
+        <h3>Acelerador <small>mantén Espacio</small><b class="val" id="throttleVal">35%</b></h3>
+        <input type="range" id="throttleSlider" min="0" max="100" step="1" />
+      </section>
+      <section>
+        <h3>Presión turbo<b class="val" id="targetVal">0,8 bar</b></h3>
+        <input type="range" id="targetSlider" min="0.3" max="2" step="0.05" />
+      </section>
+      <section>
+        <h3>Cámara lenta <small>animación</small></h3>
+        <div class="seg seg-4" id="slowButtons">
+          <button data-slow="1">Real</button>
+          <button data-slow="0.1">÷10</button>
+          <button data-slow="0.02">÷50</button>
+          <button data-slow="0.005">÷200</button>
+        </div>
+      </section>
+      <section>
+        <h3>Vista</h3>
+        <div class="seg seg-2" id="explodeButtons">
+          <button data-explode="0">Montado</button>
+          <button data-explode="1">Despiezado</button>
+        </div>
+        <div class="toggles">
+          <label><input type="checkbox" id="tFlow" checked /> Aire y gases <kbd>F</kbd></label>
+          <label><input type="checkbox" id="tXray" checked /> Rayos X <kbd>X</kbd></label>
+          <label><input type="checkbox" id="tLabels" checked /> Etiquetas <kbd>L</kbd></label>
+          <label><input type="checkbox" id="tSound" /> Sonido <kbd>S</kbd></label>
+        </div>
+        <div class="row gap">
+          <button class="ghost" id="resetView">⟲ Vista general</button>
+          <button class="ghost" id="helpBtn">? Ayuda</button>
+        </div>
+      </section>
+      <button class="collapse" id="controlsCollapse" title="Plegar">–</button>
+    </aside>
+
+    <section class="panel explain-card" id="explainCard">
+      <div class="kicker">¿Qué está pasando?</div>
+      <div class="explain" id="explain"></div>
+      <div class="cycle" id="cycleTable"></div>
+      <p class="firing">Orden de encendido <b>1 · 5 · 3 · 6 · 2 · 4</b> — una explosión cada 120° de cigüeñal</p>
+    </section>
+
+    <section class="panel part-card" id="partCard" hidden>
+      <button class="close" id="partClose" title="Cerrar">×</button>
+      <div class="part-group" id="partGroup"></div>
+      <h2 id="partName"></h2>
+      <p class="live" id="partLive"></p>
+      <h4>Qué es</h4>
+      <p id="partWhat"></p>
+      <h4>Qué hace en el motor</h4>
+      <p id="partLight"></p>
+      <div class="actions" id="partActions"></div>
+    </section>
+
+    <nav class="parts-bar" id="partsBar"></nav>
+
+    <div class="photo-inset" id="photoInset">
+      <div class="inset-head">
+        <div class="tabs" id="insetTabs">
+          <button data-tab="cyl" class="on">Cilindro</button>
+          <button data-tab="dyno">Banco de potencia</button>
+        </div>
+        <span id="insetMeta"></span>
+      </div>
+      <div class="inset-view engine-view"><canvas id="insetCanvas" width="744" height="496"></canvas></div>
+      <div class="inset-foot">
+        <div class="cyl-picker" id="cylPicker"></div>
+        <button class="shoot floor" id="floorBtn" title="Mantén pulsado (o la barra espaciadora)"><span></span>A fondo</button>
+      </div>
+    </div>
+
+    <div id="tooltip"></div>
+    <button id="menuBtn" class="menu-btn" title="Controles">☰</button>
+
+    <dialog id="help">
+      <h2>Cómo usar el laboratorio</h2>
+      <ul>
+        <li><b>Arrastra</b> para girar la vista, <b>rueda</b> para acercarte, <b>clic derecho</b> para desplazarte.</li>
+        <li><b>Clic en cualquier pieza</b> (o en la barra de piezas) para ver qué es y qué hace.</li>
+        <li>Con <b>Rayos X</b> verás los pistones, la chispa y el color del gas en cada cilindro: azul admisión, violeta compresión, naranja explosión, gris escape.</li>
+        <li>Las <b>partículas</b> muestran el aire (frío, caliente al salir del turbo y enfriado por el intercooler) y los gases de escape que mueven la turbina.</li>
+        <li><b>Mantén "A fondo"</b> o la barra espaciadora para pisar el acelerador y ver cómo carga el turbo (y el "psshh" de la blow-off al soltar).</li>
+        <li>La animación va a cámara lenta: a 3000 rpm el cigüeñal da 50 vueltas por segundo.</li>
+      </ul>
+      <p class="keys"><kbd>↑</kbd><kbd>↓</kbd> régimen · <kbd>Espacio</kbd> a fondo · <kbd>1</kbd>–<kbd>6</kbd> cilindro · <kbd>E</kbd> despiece · <kbd>X</kbd> rayos X · <kbd>F</kbd> flujo · <kbd>S</kbd> sonido · <kbd>Esc</kbd> cerrar</p>
+      <button class="ghost" id="helpClose">Entendido</button>
+    </dialog>
+  </div>
+  <script type="module" src="../src/engine/main.js"></script>
+</body>
+</html>

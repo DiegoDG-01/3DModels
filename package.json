@@ -1,0 +1,18 @@
+{
+  "name": "camera3d",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Laboratorio interactivo en 3D (Three.js) para entender cómo funciona una cámara fotográfica",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "vite": "^8.3.1"
+  }
+}
