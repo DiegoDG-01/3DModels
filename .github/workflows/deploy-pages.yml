@@ -2,7 +2,7 @@ name: Publicar en GitHub Pages
 
 on:
   push:
-    branches: [main, claude/fervent-keller-oh136y]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
